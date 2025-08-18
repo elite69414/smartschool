@@ -2,7 +2,7 @@
 
 Aplikasi "Smart School" adalah sebuah platform berbasis Laravel yang dirancang untuk membantu institusi pendidikan dalam mengelola berbagai aspek operasional sekolah, termasuk manajemen siswa, guru, dan administrasi sekolah. Aplikasi ini akan mempermudah pengelolaan data, pengarsipan, dan interaksi antara stakeholder dalam lingkungan pendidikan.
 
-Link smartscholl : [Smart School (click)](https://e-digitaledu.id/)
+Link smartscholl : [Smart School (click)](https://smartschool.rizalfahlevi8.my.id/login)
 
 ## Dosen Pembimbing
 
