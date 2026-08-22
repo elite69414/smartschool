@@ -54,21 +54,6 @@ use App\Models\Kerjasama;
 |
 */
 
-Route::post('/api/request-dd', function (Request $request) {
-    $request->validate([
-        'alamat.jalan' => 'required'
-    ]);
-    return dd($request->input('alamat'));
-});
-Route::get('/api/tes', function (Request $request) {
-    // return view('test');
-});
-
-Route::get('/api/testing', function () {
-
-    return Akademik::all();
-});
-
 Route::get('/', function () {
     if (Auth::check()) {
         return redirect('/dashboard');
@@ -368,8 +353,6 @@ Route::middleware(['userRole:siswa,admin'])->group(function () {
 
 //==========================================================================================
     // ==============[ D a f t a r - T a m u ]===============
-
-    Route::get('showTamuByUser/{username}', [DashboardController::class, 'showTamuByUser']);
 
     Route::get('/get-username-by-role/{role}', [TamuController::class, 'getUsernamesByRole']);
     Route::get('/daftar-tamu', [TamuController::class, 'daftar'])->name('daftar-tamu'); 

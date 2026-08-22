@@ -89,7 +89,7 @@ class PeminjamanController extends Controller
             'nama_peminjam' => 'required',
             'tgl_peminjaman' => 'required|date',
             'tgl_pengembalian' => 'required|date|after_or_equal:tgl_peminjaman',
-            'surat' => 'required',
+            'surat' => 'required|file|mimes:jpg,jpeg,png,pdf,doc,docx|max:10240',
 
         ]);
 
@@ -99,16 +99,8 @@ class PeminjamanController extends Controller
 
         // Validasi ketersediaan ruangan
         $existingPeminjaman = Peminjaman::where('ruang_id', $request->ruang)
-            ->where(function ($query) use ($request) {
-                $query->where(function ($q) use ($request) {
-                    $q->where('tanggal_peminjaman', '>=', $request->tgl_peminjaman)
-                        ->where('tanggal_peminjaman', '<=', $request->tgl_pengembalian);
-                })
-                    ->orWhere(function ($q) use ($request) {
-                        $q->where('tanggal_pengembalian', '>=', $request->tgl_peminjaman)
-                            ->where('tanggal_pengembalian', '<=', $request->tgl_pengembalian);
-                    });
-            })
+            ->where('tanggal_peminjaman', '<=', $request->tgl_pengembalian)
+            ->where('tanggal_pengembalian', '>=', $request->tgl_peminjaman)
             ->first();
 
         if ($existingPeminjaman) {
@@ -185,7 +177,7 @@ class PeminjamanController extends Controller
             'nama_peminjam' => 'required',
             'tgl_peminjaman' => 'required|date',
             'tgl_pengembalian' => 'required|date|after_or_equal:tgl_peminjaman',
-            'surat' => 'required',
+            'surat' => 'required|file|mimes:jpg,jpeg,png,pdf,doc,docx|max:10240',
 
         ]);
 
@@ -195,16 +187,8 @@ class PeminjamanController extends Controller
 
         // Validasi ketersediaan ruangan
         $existingPeminjaman = Peminjaman::where('ruang_id', $request->ruang)
-            ->where(function ($query) use ($request, $peminjaman) {
-                $query->where(function ($q) use ($request) {
-                    $q->where('tanggal_peminjaman', '>=', $request->tgl_peminjaman)
-                        ->where('tanggal_peminjaman', '<=', $request->tgl_pengembalian);
-                })
-                    ->orWhere(function ($q) use ($request) {
-                        $q->where('tanggal_pengembalian', '>=', $request->tgl_peminjaman)
-                            ->where('tanggal_pengembalian', '<=', $request->tgl_pengembalian);
-                    });
-            })
+            ->where('tanggal_peminjaman', '<=', $request->tgl_pengembalian)
+            ->where('tanggal_pengembalian', '>=', $request->tgl_peminjaman)
             ->where('id', '!=', $peminjaman->id)
             ->first();
 

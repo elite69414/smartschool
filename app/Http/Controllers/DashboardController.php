@@ -143,7 +143,9 @@ class DashboardController extends Controller
     // Metode kontrol untuk menangani pesan yang diterima
     public function terimaPesan($id)
     {
-        $tamu_pesan = Tamu::find($id);
+        $tamu_pesan = Tamu::whereKey($id)
+            ->where('user_id', auth()->id())
+            ->first();
 
         if ($tamu_pesan) {
             $tamu_pesan->status = 'pesan_telah_diterima';
@@ -157,7 +159,9 @@ class DashboardController extends Controller
     // Metode kontrol untuk menangani penghapusan pesan
     public function hapusPesan($id)
     {
-        $tamu_pesan = Tamu::find($id);
+        $tamu_pesan = Tamu::whereKey($id)
+            ->where('user_id', auth()->id())
+            ->first();
 
         if ($tamu_pesan) {
             $tamu_pesan->status = 'pesan_telah_selesai';
