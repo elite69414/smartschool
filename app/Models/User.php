@@ -67,7 +67,7 @@ class User extends Authenticatable
     // untuk tampil data pengumuan tamu 
     public function tamu_penguman()
     {
-        return hasMany(Tamu::class, 'Opsi_lanjutan', 'username');
+        return $this->hasMany(Tamu::class, 'Opsi_lanjutan', 'username');
     }
 
     // public function
