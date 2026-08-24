@@ -68,12 +68,12 @@
                                         </td>
 
                                         <td class="text-center">
-                                            <a href="/data-detail-nilai/{{ $jadwal->id }}/{{ $n->id }}/{{ $jadwal->mapel_id }}/{{ $semester }}"
+                                            <a href="/data-detail-nilai/{{ $jadwal->id }}/{{ $n->id }}/{{ $jadwal->id_mapel }}/{{ $semester }}"
                                                 class="btn
                                                 btn-info font-weight-bold btn--edit text-sm rounded text-capitalize">
                                                 <i class="fa fa-eye"></i> Detail Nilai
                                             </a>
-                                            <a href="/data-input-nilai/{{ $jadwal->id }}/{{ $n->id }}/{{ $jadwal->mapel_id }}/{{ $semester }}"
+                                            <a href="/data-input-nilai/{{ $jadwal->id }}/{{ $n->id }}/{{ $jadwal->id_mapel }}/{{ $semester }}"
                                                 class="btn
                                                 btn-warning font-weight-bold btn--edit text-sm rounded text-capitalize">
                                                 <i class="fa fa-edit"></i> Input Nilai
