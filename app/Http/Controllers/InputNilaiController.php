@@ -15,6 +15,11 @@ class InputNilaiController extends Controller
 {
     public function index($id)
     {
+        $user = auth()->user();
+        if ($user->current_role === 'guru') {
+            abort_unless($user->guru && (int) $user->guru->id === (int) $id, 403);
+        }
+
         $jadwal =  Jadwal::where("guru_id", $id)->groupBy("mapel_id", "kelas_id")->get();
         return view('datainputnilai.nilai', [
             'jadwal'      => $jadwal,
@@ -23,7 +28,8 @@ class InputNilaiController extends Controller
     }
     public function atur($id, $smt)
     {
-        $jadwal  = Jadwal::find($id);
+        $jadwal  = Jadwal::findOrFail($id);
+        $this->authorizeSchedule($jadwal);
         $kelas = $jadwal->kelas_id;
         $siswa = Siswa::where("kelas_id", $kelas)->get();
         $nilai = Nilai::where("kelas_id", $kelas)->get();
@@ -42,9 +48,11 @@ class InputNilaiController extends Controller
     }
     public function input($idjadwal, $idsiswa, $idmapel, $smt)
     {
-        $jadwal = Jadwal::find($idjadwal);
-        $mapel = Mapel::find($idmapel);
-        $siswa = Siswa::find($idsiswa);
+        $jadwal = Jadwal::findOrFail($idjadwal);
+        $this->authorizeSchedule($jadwal);
+        $mapel = Mapel::findOrFail($idmapel);
+        $siswa = Siswa::findOrFail($idsiswa);
+        abort_unless((int) $siswa->kelas_id === (int) $jadwal->kelas_id && (int) $mapel->id === (int) $jadwal->mapel_id, 403);
         $semester = $smt;
         $nilai = Nilai::where(
             [
@@ -63,9 +71,11 @@ class InputNilaiController extends Controller
     }
     public function detail($idjadwal, $idsiswa, $idmapel, $smt)
     {
-        $jadwal = Jadwal::find($idjadwal);
-        $mapel = Mapel::find($idmapel);
-        $siswa = Siswa::find($idsiswa);
+        $jadwal = Jadwal::findOrFail($idjadwal);
+        $this->authorizeSchedule($jadwal);
+        $mapel = Mapel::findOrFail($idmapel);
+        $siswa = Siswa::findOrFail($idsiswa);
+        abort_unless((int) $siswa->kelas_id === (int) $jadwal->kelas_id && (int) $mapel->id === (int) $jadwal->mapel_id, 403);
         $semester = $smt;
         $nilai = Nilai::where(
             [
@@ -84,6 +94,20 @@ class InputNilaiController extends Controller
     }
     public function store(Request $request, $id_jadwal, $idsiswa, $idmapel, $smt)
     {
+        $jadwal = Jadwal::findOrFail($id_jadwal);
+        $this->authorizeSchedule($jadwal);
+        $siswa = Siswa::findOrFail($idsiswa);
+        abort_unless((int) $siswa->kelas_id === (int) $jadwal->kelas_id && (int) $idmapel === (int) $jadwal->mapel_id, 403);
+
+        $request->validate([
+            'tugas1' => ['required', 'numeric', 'between:0,100'],
+            'tugas2' => ['required', 'numeric', 'between:0,100'],
+            'tugas3' => ['required', 'numeric', 'between:0,100'],
+            'tugas4' => ['required', 'numeric', 'between:0,100'],
+            'tugas5' => ['required', 'numeric', 'between:0,100'],
+            'uts' => ['required', 'numeric', 'between:0,100'],
+            'uas' => ['required', 'numeric', 'between:0,100'],
+        ]);
 
         $nilai = $request->all();
         $tugas1 = $request->input('tugas1');
@@ -156,10 +180,10 @@ class InputNilaiController extends Controller
                 'uts'            => $request->uts,
                 'uas'            => $request->uas,
                 'semester'       => $request->semester,
-                'siswa_id'       => $request->siswa_id,
-                'kelas_id'       => $request->kelas_id,
-                'guru_id'        => $request->guru_id,
-                'mapel_id'       => $request->mapel_id,
+                'siswa_id'       => $idsiswa,
+                'kelas_id'       => $jadwal->kelas_id,
+                'guru_id'        => $jadwal->guru_id,
+                'mapel_id'       => $idmapel,
                 'rata_nilai'     => $nilairata,
                 'nilai_huruf'    => $nilai_huruf_pth
             ];
@@ -176,11 +200,11 @@ class InputNilaiController extends Controller
                 'tugas5'         => $request->tugas5,
                 'uts'            => $request->uts,
                 'uas'            => $request->uas,
-                'semester'       => $request->semester,
-                'siswa_id'       => $request->siswa_id,
-                'kelas_id'       => $request->kelas_id,
-                'guru_id'        => $request->guru_id,
-                'mapel_id'       => $request->mapel_id,
+                'semester'       => $smt,
+                'siswa_id'       => $idsiswa,
+                'kelas_id'       => $jadwal->kelas_id,
+                'guru_id'        => $jadwal->guru_id,
+                'mapel_id'       => $idmapel,
                 'rata_nilai'     => $nilai_rata,
                 'nilai_huruf'    => $nilai_huruf_pth
 
@@ -189,5 +213,13 @@ class InputNilaiController extends Controller
         // Nilai::create($nilai);
         return Redirect('/data-nilai-atur/' . $id_jadwal . '/' . $smt)->with('toast_success', 'Data berhasil disimpan !');;
         // return Redirect::back()->with('toast_success','Data berhasil ditambahkan !');
+    }
+
+    private function authorizeSchedule(Jadwal $jadwal): void
+    {
+        $user = auth()->user();
+        if ($user->current_role === 'guru') {
+            abort_unless($user->guru && (int) $user->guru->id === (int) $jadwal->guru_id, 403);
+        }
     }
 }

@@ -105,7 +105,7 @@ class PeminjamanBarangController extends Controller
     {
         // dd($request->all());
         $validated = $request->validate([
-            'id' => ['required'],
+            'id' => ['required', 'exists:peminjaman_barangs,id'],
             'barang_id' => ['sometimes', 'numeric'],
             'jumlah' => ['sometimes', 'numeric'],
             'nama_peminjam' => ['sometimes', 'string'],
@@ -114,7 +114,8 @@ class PeminjamanBarangController extends Controller
         ]);
 
     
-        Peminjaman_barang::saved($validated);
+        $peminjaman = Peminjaman_barang::findOrFail($validated['id']);
+        $peminjaman->update(collect($validated)->except('id')->all());
 
         return redirect()->route('peminjamanBarang.index');
     }
