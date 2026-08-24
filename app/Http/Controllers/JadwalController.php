@@ -273,6 +273,10 @@ class JadwalController extends Controller
 
     public function jadwalsiswa($id)
     {
+        if (auth()->user()->current_role === 'siswa' && (int) auth()->user()->siswa->id_kelas !== (int) $id) {
+            abort(403);
+        }
+
         if ($id == 'null') {
             return back()->with('toast_warning', 'Fitur ini masih dikerjakan');
         }
