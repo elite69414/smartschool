@@ -115,7 +115,6 @@ class InputNilaiController extends Controller
             'uas' => ['required', 'numeric', 'between:0,100'],
         ]);
 
-        $nilai = $request->all();
         $tugas1 = $request->input('tugas1');
         $tugas2 = $request->input('tugas2');
         $tugas3 = $request->input('tugas3');
@@ -185,7 +184,7 @@ class InputNilaiController extends Controller
                 'tugas5'         => $request->tugas5,
                 'uts'            => $request->uts,
                 'uas'            => $request->uas,
-                'semester'       => $request->semester,
+                'semester'       => $smt,
                 'siswa_id'       => $idsiswa,
                 'kelas_id'       => $jadwal->jadwal->id_kelas,
                 'guru_id'        => $jadwal->id_guru,
