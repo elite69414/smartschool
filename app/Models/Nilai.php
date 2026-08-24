@@ -18,7 +18,28 @@ class Nilai extends Model
         'izin',
         'tanpa_keterangan',
         'id_siswa',
-        'id_akademik'
+        'id_akademik',
+        'tugas1',
+        'tugas2',
+        'tugas3',
+        'tugas4',
+        'tugas5',
+        'uts',
+        'uas',
+        'semester',
+        'siswa_id',
+        'kelas_id',
+        'guru_id',
+        'mapel_id',
+        'rata_nilai',
+        'nilai_huruf',
+        'ijin',
+        'tanpa_ket',
+        'nilai_pth',
+        'nilai_ktr',
+        'nilai_huruf_pth',
+        'nilai_huruf_ktr',
+        'status'
     ];
 
     public function detail_nilai()
