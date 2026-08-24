@@ -17,6 +17,14 @@ class EditPasswordController extends Controller
     }
     public function ubah(Request $request, User $user)
     {
+        abort_unless($user->is(auth()->user()), 403);
+
+        $request->validate([
+            'old_password' => ['required', 'string'],
+            'new_password' => ['required', 'string', 'min:8'],
+            'new_password_confirm' => ['required', 'same:new_password'],
+        ]);
+
         if (!Hash::check($request->get('old_password'), $user->password)) {
             return back()->with('toast_error', "Password lama yang dimasukkan salah!");
         } elseif (strcmp($request->get('old_password'), $request->new_password) == 0) {

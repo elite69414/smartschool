@@ -174,6 +174,10 @@ class RaportController extends Controller
     }
     public function show(Request $request, $jenis_nilai, Siswa $siswa)
     {
+        if (auth()->user()->current_role === 'siswa' && (int) $siswa->id_user !== (int) auth()->id()) {
+            abort(403);
+        }
+
         $datas = null;
         if ($request->has('select_raport')) {
             $raport = Detail_nilai::all()->where('id_nilai', '=', $request->select_raport);
