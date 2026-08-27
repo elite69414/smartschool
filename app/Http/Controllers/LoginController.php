@@ -26,12 +26,15 @@ class LoginController extends Controller
             'username' => ['required'],
             'password' => ['required'],
         ]);
+        $credentials['deleted'] = false;
+
         if (Auth::attempt($credentials)) {
-            $role_array = array_values(array_filter(explode(',', auth()->user()->role), function ($value) {
+            $roles = array_values(array_filter(array_map('trim', explode(',', (string) auth()->user()->role))));
+            $role_array = array_values(array_filter($roles, function ($value) {
                 return $value !== 'root';
             }));
 
-            if (auth()->user()->current_role == null) {
+            if (auth()->user()->current_role === null && isset($role_array[0])) {
                 DB::table('users')->where('id', '=', auth()->user()->id)->update(['current_role' => $role_array[0]]);
             }
             $request->session()->regenerate();
@@ -42,12 +45,16 @@ class LoginController extends Controller
 
     public function setRole(Request $request)
     {
-        $role = $request->role;
+        $role = $request->validate([
+            'role' => ['required', 'string'],
+        ])['role'];
+        $user = $request->user();
+        $roles = array_map('trim', explode(',', (string) $user->role));
 
-        if (!in_array($role, explode(',', auth()->user()->role))) {
+        if (!in_array($role, $roles, true)) {
             return back()->with('toast_error', 'Gagal mengubah role.');
         }
-        DB::table('users')->where('id', '=', auth()->user()->id)->update(['current_role' => $role]);
+        DB::table('users')->where('id', '=', $user->id)->update(['current_role' => $role]);
 
         return redirect()->route('dashboard')->with('title', 'Dashboard')->with('toast_success', "Kamu sekarang " . ucfirst($role));
     }
